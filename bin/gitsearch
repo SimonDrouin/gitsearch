@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+
+require 'gli'
+require 'gitsearch'
+
+include GLI::App
+
+program_desc 'Describe your application here'
+
+version Gitsearch::VERSION
+
+subcommand_option_handling :normal
+arguments :strict
+
+desc 'Run in verbose mode'
+switch [:verbose], negatable: false
+
+desc 'Search a repository on Github with a simple query'
+arg_name 'The query'
+command :search do |c|
+  c.flag [:language, :l], default_value: nil, desc: "The language"
+  c.action do |global_options,options,args|
+
+    raise "you must have at least one query argument, none found" unless args
+
+    query = args.join(" ")
+    puts "Searching github for #{query}" if global_options[:verbose]
+
+    finder = RepositoryFinder.new
+    repositories = finder.search(query, language: options[:language])
+
+    puts "updating #{repositories.size} in database #{@filename}" if global_options[:verbose]
+    db = Database.new
+    db.batch_update(repositories)
+
+    p repositories.map{|r| r["id"]}
+
+    logger = Log.new
+    puts "logging query in #{logger.filename}"
+    logger.log(repositories.map{|r| r["id"]})
+  end
+end
+
+desc 'Delete existing data'
+arg_name 'Batch of repository ids seperated by spaces'
+command :delete do |c|
+
+  c.flag [:log, :l], default_value: nil, desc: "Deletes all ids refering to a specific log id"
+  c.action do |global_options,options,args|
+    raise "At least one repository ID or a log id must be specified" unless args || options[:log]
+
+    puts "Deleting #{args}" if global_options[:verbose]
+    db.batch_delete(args)
+
+    return unless options[:log]
+
+    log = Log.new(options[:log])
+    log_ids = log.each_repository_id do |id|
+      db.delete(log_ids)
+    end
+  end
+end
+
+pre do |global,command,options,args|
+end
+
+post do |global,command,options,args|
+end
+
+on_error do |exception|
+end
+
+exit run(ARGV)

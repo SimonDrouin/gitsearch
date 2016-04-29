@@ -1,0 +1,5 @@
+= gitsearch
+
+Generate this with
+    gitsearch rdoc
+After you have described your command line interface

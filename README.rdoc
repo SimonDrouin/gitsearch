@@ -1,0 +1,6 @@
+= gitsearch
+
+Describe your project here
+
+:include:gitsearch.rdoc
+
