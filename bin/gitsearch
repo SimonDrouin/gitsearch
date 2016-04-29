@@ -47,14 +47,18 @@ command :delete do |c|
   c.action do |global_options,options,args|
     raise "At least one repository ID or a log id must be specified" unless args || options[:log]
 
+    db = Database.new
+
     puts "Deleting #{args}" if global_options[:verbose]
     db.batch_delete(args)
 
-    return unless options[:log]
+    if options[:log] then
+      log = Log.new.log_id(options[:log])
+      log.each_repository_id do |id|
+        db.delete(id)
+      end
 
-    log = Log.new(options[:log])
-    log_ids = log.each_repository_id do |id|
-      db.delete(log_ids)
+      `rm #{log.filename}`
     end
   end
 end

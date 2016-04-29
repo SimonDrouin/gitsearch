@@ -10,7 +10,6 @@ class Database
 
   # On assume que le format json est connu
   def batch_update(repositories)
-
     open do |store|
       repositories.each do |repository|
         id = repository["id"]
@@ -20,10 +19,22 @@ class Database
     end
   end
 
-  def find_by(id)
+  def delete(repository_id)
     open do |store|
-      puts store[:"#{id}"]
+      store.delete(repository_id)
     end
+  end
+
+  def batch_delete(repository_ids)
+    open do |store|
+      repository_ids.each do |id|
+        store.delete(id)
+      end
+    end
+  end
+
+  def find_by(id)
+    open { |store| store[:"#{id}"] }
   end
 
   private
