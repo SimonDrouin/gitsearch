@@ -23,11 +23,11 @@ command :search do |c|
 
     raise "you must have at least one query argument, none found" if args.empty?
 
-    query = args.join(" ")
+    query = args.join(" ")    
     puts "Searching github for #{query}" if global_options[:verbose]
 
     finder = RepositoryFinder.new
-    repositories = finder.search(query, language: options[:language])
+    repositories = finder.search(query, options[:language])
 
     puts "updating #{repositories.size} in database #{@filename}" if global_options[:verbose]
     db = Database.new
