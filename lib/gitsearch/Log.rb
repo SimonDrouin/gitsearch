@@ -1,3 +1,5 @@
+require 'securerandom'
+
 class Log
   LOG_DIRECTORY_NAME = "logs"
   LOG_FILE_EXT = ".tp3Log"

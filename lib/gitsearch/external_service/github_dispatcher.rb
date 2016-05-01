@@ -7,7 +7,7 @@ module ExternalService
 
     API_URI = "https://api.github.com/search/repositories"
 
-    def initialize(sleep_time_seconds: 5, client: RestClient)
+    def initialize(sleep_time_seconds= 5, client= RestClient)
       @client = client
 
       super(sleep_time_seconds)

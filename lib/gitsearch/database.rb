@@ -3,7 +3,7 @@ require "pstore"
 class Database
   DEFAULT_DATABASE_FILENAME = "database.pstore"
 
-  def initialize(filename: nil)
+  def initialize(filename=nil)
     @filename = filename || DEFAULT_DATABASE_FILENAME
     @store = PStore.new(@filename)
   end
