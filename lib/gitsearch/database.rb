@@ -40,8 +40,8 @@ class Database
   def batch_info(repository_ids)
     repos = []
     open do |store|
-      repository_ids.each do |id|        
-        repos << store[id]
+      repository_ids.each do |id|                
+        repos << store[id.to_sym]
       end
     end
     repos

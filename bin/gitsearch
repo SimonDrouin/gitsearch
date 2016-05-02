@@ -79,13 +79,11 @@ command :list do |c|
       if options[:log] then
         puts "Fetching repositories from log" if global_options[:verbose]
         log = Log.new.log_id(options[:log])
-        log.each_repository_id do |id|
-          ids << id    
-        end
+        ids = log.ids        
         repos = db.batch_info(ids)
       end
 
-      unless args.empty?
+      if !args.empty?
         puts "Fetching repositories from arguments" if global_options[:verbose]
         repos = db.batch_info(args)
       end

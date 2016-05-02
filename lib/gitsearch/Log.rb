@@ -21,8 +21,16 @@ class Log
 
   def each_repository_id
     File.open(filename, "r") do |i|
-      i.each_line {|line| yield(line) }
+      i.each_line {|line| yield(line.strip) }
     end
+  end
+
+  def ids
+    ids = []
+    File.open(filename, "r") do |i|
+      i.each_line {|line| ids << line.strip }
+    end
+    ids
   end
 
   def filename
