@@ -39,7 +39,6 @@ GEM
       domain_name (~> 0.5)
     json (1.8.3)
     mime-types (2.99.1)
-    minitest (5.8.4)
     multi_json (1.11.3)
     multi_test (0.1.2)
     netrc (0.11.0)
@@ -51,7 +50,16 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    rspec (3.4.0)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
+    rspec-core (3.4.4)
+      rspec-support (~> 3.4.0)
     rspec-expectations (3.4.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-mocks (3.4.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.4.0)
     rspec-support (3.4.1)
@@ -66,11 +74,11 @@ PLATFORMS
 DEPENDENCIES
   aruba
   gitsearch!
-  minitest
   oj
   rake
   rdoc
   rest-client
+  rspec
 
 BUNDLED WITH
    1.11.2
