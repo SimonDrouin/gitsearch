@@ -109,6 +109,34 @@ command :list do |c|
   end
 end
 
+desc 'Clone repository'
+arg_name 'Clone'
+command :clone do |c|
+  c.action do |global_options, options, args|
+    raise "A repository ID and a full path are required" if args.length != 2
+    
+    path = Pathname.new(args[1])
+    raise "The path must be absolute" unless path.absolute?
+
+    db = Database.new
+    repo = db.find_by(args[0])
+    url = repo["clone_url"] if repo
+
+    raise "Repository not found: #{args[0]}" unless url
+
+    if url then
+      if global_options[:verbose] then
+        `git clone #{url} #{path} -v`
+      else
+        `git clone #{url} #{path} -q`
+      end
+    end
+
+    raise "Error while cloning repository: #{repo["name"]}" if $?.exitstatus != 0
+  end
+end
+
+
 pre do |global,command,options,args|
   true
 end

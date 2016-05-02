@@ -34,7 +34,9 @@ class Database
   end
 
   def find_by(id)
-    open { |store| store[:"#{id}"] }
+    repo = nil
+    open { |store| repo = store[:"#{id}"] }
+    repo
   end
 
   def batch_info(repository_ids)
