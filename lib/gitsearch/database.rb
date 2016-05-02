@@ -37,6 +37,26 @@ class Database
     open { |store| store[:"#{id}"] }
   end
 
+  def batch_info(repository_ids)
+    repos = []
+    open do |store|
+      repository_ids.each do |id|        
+        repos << store[id]
+      end
+    end
+    repos
+  end
+
+  def repositories_info()
+    repos = []
+    open do |store|
+      store.roots().each do |repo|
+      repos << store[repo]
+      end
+    end
+    repos
+  end
+
   private
   def open
     @store.transaction do

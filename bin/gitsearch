@@ -63,6 +63,54 @@ command :delete do |c|
   end
 end
 
+desc 'List repositories'
+arg_name 'Listing'
+command :list do |c|
+  c.flag [:log], default_value: nil, desc: "List all repositories included in a specific log id"
+  c.flag [:language, :l], default_value: nil, desc: "List all repositories of a specified programming language"
+  c.switch [:description, :d], desc: "Display repository's description"
+  c.action do |global_options, options, args|    
+      raise "Cannot have a log id and repositories id as arguments" if options[:log] && !args.empty?
+
+      db = Database.new
+      ids = []
+      repos = []
+
+      if options[:log] then
+        puts "Fetching repositories from log" if global_options[:verbose]
+        log = Log.new.log_id(options[:log])
+        log.each_repository_id do |id|
+          ids << id    
+        end
+        repos = db.batch_info(ids)
+      end
+
+      unless args.empty?
+        puts "Fetching repositories from arguments" if global_options[:verbose]
+        repos = db.batch_info(args)
+      end
+
+      if repos.empty? then
+        puts "Fetching all repositories" if global_options[:verbose]
+        repos = db.repositories_info()
+      end
+
+       if options[:language] then
+        puts "Filtering repositories by language: #{option[:language]}" if global_options[:verbose]
+        repos = repos.select {|repo| repo["language"] && repo["language"].downcase == options[:language].downcase}
+      end
+
+      repos.each do |repo|
+        if repo then
+          puts "----------" + "\n"
+          puts "Name: #{repo["name"]}" + "\n"
+          puts "Github URL: #{repo["html_url"]}" + "\n"
+          puts wrap("Description: #{repo["description"]}") if options[:description]
+        end
+      end
+  end
+end
+
 pre do |global,command,options,args|
   true
 end
@@ -74,5 +122,10 @@ end
 on_error do |exception|
   true
 end
+
+def wrap(description, width=78)
+  description.gsub(/(.{1,#{width}})(\s+|\Z)/, "\\1\n")
+end
+
 
 exit run(ARGV)
