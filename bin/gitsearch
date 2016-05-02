@@ -124,12 +124,10 @@ command :clone do |c|
 
     raise "Repository not found: #{args[0]}" unless url
 
-    if url then
-      if global_options[:verbose] then
-        `git clone #{url} #{path} -v`
-      else
-        `git clone #{url} #{path} -q`
-      end
+    if global_options[:verbose] then
+      `git clone #{url} #{path} -v`
+    else
+      `git clone #{url} #{path} -q`
     end
 
     raise "Error while cloning repository: #{repo["name"]}" if $?.exitstatus != 0
