@@ -38,19 +38,9 @@ command :delete do |c|
   c.action do |global_options,options,args|
     raise "At least one repository ID or a log id must be specified" unless args || options[:log]
 
-    db = Database.new
-
     puts "Deleting #{args}" if global_options[:verbose]
-    db.batch_delete(args)
 
-    if options[:log] then
-      log = Log.new.log_id(options[:log])
-      log.each_repository_id do |id|
-        db.delete(id)
-      end
-
-      `rm #{log.filename}`
-    end
+    Gitsearch.delete(args, options[:log])
   end
 end
 
@@ -91,6 +81,7 @@ command :list do |c|
           puts "----------" + "\n"
           puts "Name: #{repo["name"]}" + "\n"
           puts "Github URL: #{repo["html_url"]}" + "\n"
+          puts "External Repository id: #{repo["id"]}"
           puts wrap("Description: #{repo["description"]}") if options[:description]
         end
       end

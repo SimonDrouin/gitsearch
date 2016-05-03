@@ -29,7 +29,7 @@ class Database
   def batch_delete(repository_ids)
     open do |store|
       repository_ids.each do |id|
-        store.delete(id)
+        store.delete(id.to_sym)
       end
     end
   end

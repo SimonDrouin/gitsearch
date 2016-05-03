@@ -18,6 +18,23 @@ module Gitsearch
     logger.log(repositories.map{|r| r["id"]})
   end
 
+  def self.delete(repository_ids, log=nil)
+    raise "there must be at least one repository id or log id" unless !repository_ids.empty? || log
+
+    db = Database.new
+    puts "YOOO #{repository_ids}"
+    db.batch_delete(repository_ids)
+
+    if log then
+      logger = Log.new.log_id(log)
+      logger.each_repository_id do |id|
+        db.delete(id)
+      end
+
+      `rm #{logger.filename}`
+    end
+  end
+
   def self.list_by_ids(ids= nil)
     db = Database.new
 
