@@ -139,7 +139,7 @@ describe Database do
   describe "#batch_info" do
     database_filename = "TEST_DATABASE"
     repositories = [{id: "id1", data: "some_data"}, {id: "id2", data: "some_data2"}, {id: "id3", data: "some_data3"}]
-    
+
     it "should return only one object when only one id" do
       db = Database.new(database_filename)
       db.batch_update(repositories)
@@ -172,16 +172,16 @@ describe Database do
 
       repositories_info = db.batch_info(["id0", "id5"])
 
-      refute_nil repositories_info      
+      refute_nil repositories_info
       assert_empty repositories_info
     end
   end
-  
-  describe "#repositories_info()" do
+
+  describe "#repositories_info" do
     database_filename = "TEST_DATABASE"
     repositories = [{id: "id1", data: "some_data"}, {id: "id2", data: "some_data2"}, {id: "id3", data: "some_data3"}]
 
-    it "should return no object when no data in database" do
+    it "has a silent behavior when no information is found" do
       db = Database.new(database_filename)
 
       repositories_info = db.repositories_info()
@@ -190,7 +190,7 @@ describe Database do
       assert_empty repositories_info
     end
 
-    it "should return all objects of database when data in database" do
+    it "gets the information of all valid data in the database" do
       db = Database.new(database_filename)
       db.batch_update(repositories)
 
@@ -204,5 +204,5 @@ describe Database do
       assert_equal("some_data2", repositories_info[1][:data])
       assert_equal("some_data3", repositories_info[2][:data])
     end
-  end  
+  end
 end
