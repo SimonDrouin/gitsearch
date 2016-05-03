@@ -23,19 +23,10 @@ command :search do |c|
 
     raise "you must have at least one query argument, none found" if args.empty?
 
-    query = args.join(" ")    
+    query = args.join(" ")
     puts "Searching github for #{query}" if global_options[:verbose]
 
-    finder = RepositoryFinder.new
-    repositories = finder.search(query, options[:language])
-
-    puts "updating #{repositories.size} in database #{@filename}" if global_options[:verbose]
-    db = Database.new
-    db.batch_update(repositories)
-
-    logger = Log.new
-    puts "logging query in #{logger.filename}" if global_options[:verbose]
-    logger.log(repositories.map{|r| r["id"]})
+    Gitsearch.search(query, options[:language], global_options[:verbose])
   end
 end
 
@@ -69,7 +60,7 @@ command :list do |c|
   c.flag [:log], default_value: nil, desc: "List all repositories included in a specific log id"
   c.flag [:language, :l], default_value: nil, desc: "List all repositories of a specified programming language"
   c.switch [:description, :d], desc: "Display repository's description"
-  c.action do |global_options, options, args|    
+  c.action do |global_options, options, args|
       raise "Cannot have a log id and repositories id as arguments" if options[:log] && !args.empty?
 
       db = Database.new
@@ -79,7 +70,7 @@ command :list do |c|
       if options[:log] then
         puts "Fetching repositories from log" if global_options[:verbose]
         log = Log.new.log_id(options[:log])
-        ids = log.ids        
+        ids = log.ids
         repos = db.batch_info(ids)
       end
 
@@ -114,7 +105,7 @@ arg_name 'Clone'
 command :clone do |c|
   c.action do |global_options, options, args|
     raise "A repository ID and a full path are required" if args.length != 2
-    
+
     path = Pathname.new(args[1])
     raise "The path must be absolute" unless path.absolute?
 
