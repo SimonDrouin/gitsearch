@@ -17,4 +17,22 @@ module Gitsearch
     puts "logging query in #{logger.filename}" if verbose
     logger.log(repositories.map{|r| r["id"]})
   end
+
+  def self.list_by_ids(ids= nil)
+    
+    unless ids
+        log = Log.new.log_id(options[:log])
+        ids = log.ids
+    end
+
+    db.batch_info(ids.map {|id| id.to_sym})
+  end
+
+  def self.list_all()
+    db.repositories_info()
+  end
+
+  def self.filter_by_lang(repositories, language)
+    repositories.select {|repo| repo["language"] && repo["language"].downcase == language.downcase}
+  end
 end

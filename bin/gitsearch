@@ -64,29 +64,26 @@ command :list do |c|
       raise "Cannot have a log id and repositories id as arguments" if options[:log] && !args.empty?
 
       db = Database.new
-      ids = []
       repos = []
 
       if options[:log] then
         puts "Fetching repositories from log" if global_options[:verbose]
-        log = Log.new.log_id(options[:log])
-        ids = log.ids
-        repos = db.batch_info(ids{|id| id.to_sym})
+        repos = Gitsearch.list_by_ids()
       end
 
       if !args.empty?
         puts "Fetching repositories from arguments" if global_options[:verbose]
-        repos = db.batch_info(args.map {|id| id.to_sym})
+        repos = Gitsearch.list_by_ids(args.map {|id| id.to_sym})
       end
 
       if repos.empty? then
         puts "Fetching all repositories" if global_options[:verbose]
-        repos = db.repositories_info()
+        repos = Gitsearch.list_all()
       end
 
        if options[:language] then
-        puts "Filtering repositories by language: #{option[:language]}" if global_options[:verbose]
-        repos = repos.select {|repo| repo["language"] && repo["language"].downcase == options[:language].downcase}
+        puts "Filtering repositories by language: #{options[:language]}" if global_options[:verbose]
+        repos = Gitsearch.filter_by_lang(repos, options[:language])
       end
 
       repos.each do |repo|
