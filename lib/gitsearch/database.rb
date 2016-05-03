@@ -45,17 +45,17 @@ class Database
     repos = []
     open do |store|
       repository_ids.each do |id|
-        repos << store[id.to_sym]
+        repos << store[id]
       end
     end
-    repos
+    repos.compact
   end
 
   def repositories_info()
     repos = []
     open do |store|
-      store.roots().each do |repo|
-      repos << store[repo]
+      store.roots().each do |id|
+      repos << store[id]
       end
     end
     repos

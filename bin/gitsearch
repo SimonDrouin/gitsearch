@@ -71,12 +71,12 @@ command :list do |c|
         puts "Fetching repositories from log" if global_options[:verbose]
         log = Log.new.log_id(options[:log])
         ids = log.ids
-        repos = db.batch_info(ids)
+        repos = db.batch_info(ids{|id| id.to_sym})
       end
 
       if !args.empty?
         puts "Fetching repositories from arguments" if global_options[:verbose]
-        repos = db.batch_info(args)
+        repos = db.batch_info(args.map {|id| id.to_sym})
       end
 
       if repos.empty? then
@@ -110,7 +110,7 @@ command :clone do |c|
     raise "The path must be absolute" unless path.absolute?
 
     db = Database.new
-    repo = db.find_by(args[0])
+    repo = db.find_by(args[0].to_sym)
     url = repo["clone_url"] if repo
 
     raise "Repository not found: #{args[0]}" unless url

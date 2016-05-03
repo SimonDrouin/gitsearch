@@ -135,4 +135,74 @@ describe Database do
       assert_nil repository3
     end
   end
+
+  describe "#batch_info" do
+    database_filename = "TEST_DATABASE"
+    repositories = [{id: "id1", data: "some_data"}, {id: "id2", data: "some_data2"}, {id: "id3", data: "some_data3"}]
+    
+    it "should return only one object when only one id" do
+      db = Database.new(database_filename)
+      db.batch_update(repositories)
+
+      repositories_info = db.batch_info(["id1"])
+
+      refute_nil repositories_info
+      refute_empty repositories_info
+      assert_equal(1, repositories_info.length)
+      assert_equal("some_data", repositories_info[0][:data])
+    end
+
+    it "should return more than one object when more than one id" do
+      db = Database.new(database_filename)
+      db.batch_update(repositories)
+
+      repositories_info = db.batch_info(["id1", "id2"])
+
+      refute_nil repositories_info
+      refute_empty repositories_info
+      assert_equal(2, repositories_info.length)
+      assert_equal("some_data", repositories_info[0][:data])
+      assert_equal("some_data2", repositories_info[1][:data])
+
+    end
+
+    it "should return no object when no object with ids in database" do
+      db = Database.new(database_filename)
+      db.batch_update(repositories)
+
+      repositories_info = db.batch_info(["id0", "id5"])
+
+      refute_nil repositories_info      
+      assert_empty repositories_info
+    end
+  end
+  
+  describe "#repositories_info()" do
+    database_filename = "TEST_DATABASE"
+    repositories = [{id: "id1", data: "some_data"}, {id: "id2", data: "some_data2"}, {id: "id3", data: "some_data3"}]
+
+    it "should return no object when no data in database" do
+      db = Database.new(database_filename)
+
+      repositories_info = db.repositories_info()
+
+      refute_nil repositories_info
+      assert_empty repositories_info
+    end
+
+    it "should return all objects of database when data in database" do
+      db = Database.new(database_filename)
+      db.batch_update(repositories)
+
+      repositories_info = db.repositories_info()
+
+      refute_nil repositories_info
+      refute_empty repositories_info
+      assert_equal(3, repositories_info.length)
+
+      assert_equal("some_data", repositories_info[0][:data])
+      assert_equal("some_data2", repositories_info[1][:data])
+      assert_equal("some_data3", repositories_info[2][:data])
+    end
+  end  
 end
