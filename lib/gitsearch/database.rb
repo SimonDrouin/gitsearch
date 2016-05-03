@@ -1,10 +1,11 @@
 require "pstore"
 
 class Database
-  DEFAULT_DATABASE_FILENAME = "database.pstore"
+  DEFAULT_DATABASE_FILENAME = "database"
+  EXTENTION = ".pstore"
 
   def initialize(filename=nil)
-    @filename = filename || DEFAULT_DATABASE_FILENAME
+    @filename = (filename || DEFAULT_DATABASE_FILENAME) + EXTENTION
     @store = PStore.new(@filename)
   end
 
@@ -12,9 +13,9 @@ class Database
   def batch_update(repositories)
     open do |store|
       repositories.each do |repository|
-        id = repository["id"]
+        id = repository[:id]
 
-        store[:"#{id}"] = repository
+        store[id] = repository
       end
     end
   end
@@ -34,7 +35,10 @@ class Database
   end
 
   def find_by(id)
-    open { |store| store[:"#{id}"] }
+    repo = nil
+    open { |store| repo  = store[id] }
+
+    repo
   end
 
   def batch_info(repository_ids)
