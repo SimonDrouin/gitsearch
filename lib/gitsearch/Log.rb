@@ -30,6 +30,7 @@ class Log
     File.open(filename, "r") do |i|
       i.each_line {|line| ids << line.strip }
     end
+
     ids
   end
 
