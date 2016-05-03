@@ -73,7 +73,7 @@ command :list do |c|
 
       if !args.empty?
         puts "Fetching repositories from arguments" if global_options[:verbose]
-        repos = Gitsearch.list_by_ids(args.map {|id| id.to_sym})
+        repos = Gitsearch.list_by_ids(args)
       end
 
       if repos.empty? then

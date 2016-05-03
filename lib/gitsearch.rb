@@ -19,7 +19,8 @@ module Gitsearch
   end
 
   def self.list_by_ids(ids= nil)
-    
+    db = Database.new
+
     unless ids
         log = Log.new.log_id(options[:log])
         ids = log.ids
@@ -29,6 +30,7 @@ module Gitsearch
   end
 
   def self.list_all()
+    db = Database.new
     db.repositories_info()
   end
 
