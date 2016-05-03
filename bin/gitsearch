@@ -51,40 +51,8 @@ command :list do |c|
   c.flag [:language, :l], default_value: nil, desc: "List all repositories of a specified programming language"
   c.switch [:description, :d], desc: "Display repository's description"
   c.action do |global_options, options, args|
-      raise "Cannot have a log id and repositories id as arguments" if options[:log] && !args.empty?
 
-      db = Database.new
-      repos = []
-
-      if options[:log] then
-        puts "Fetching repositories from log" if global_options[:verbose]
-        repos = Gitsearch.list_by_ids()
-      end
-
-      if !args.empty?
-        puts "Fetching repositories from arguments" if global_options[:verbose]
-        repos = Gitsearch.list_by_ids(args)
-      end
-
-      if repos.empty? then
-        puts "Fetching all repositories" if global_options[:verbose]
-        repos = Gitsearch.list_all()
-      end
-
-       if options[:language] then
-        puts "Filtering repositories by language: #{options[:language]}" if global_options[:verbose]
-        repos = Gitsearch.filter_by_lang(repos, options[:language])
-      end
-
-      repos.each do |repo|
-        if repo then
-          puts "----------" + "\n"
-          puts "Name: #{repo["name"]}" + "\n"
-          puts "Github URL: #{repo["html_url"]}" + "\n"
-          puts "External Repository id: #{repo["id"]}"
-          puts wrap("Description: #{repo["description"]}") if options[:description]
-        end
-      end
+    Gitsearch.list(args, options[:log], options[:verbose], options[:language], options[:description])
   end
 end
 

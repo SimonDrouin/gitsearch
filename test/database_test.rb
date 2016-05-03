@@ -177,14 +177,14 @@ describe Database do
     end
   end
 
-  describe "#repositories_info" do
+  describe "#all" do
     database_filename = "TEST_DATABASE"
     repositories = [{id: "id1", data: "some_data"}, {id: "id2", data: "some_data2"}, {id: "id3", data: "some_data3"}]
 
     it "has a silent behavior when no information is found" do
       db = Database.new(database_filename)
 
-      repositories_info = db.repositories_info()
+      repositories_info = db.all
 
       refute_nil repositories_info
       assert_empty repositories_info
@@ -194,7 +194,7 @@ describe Database do
       db = Database.new(database_filename)
       db.batch_update(repositories)
 
-      repositories_info = db.repositories_info()
+      repositories_info = db.all
 
       refute_nil repositories_info
       refute_empty repositories_info

@@ -36,28 +36,28 @@ class Database
 
   def find_by(id)
     repo = nil
-    open { |store| repo  = store[id] }
 
+    open { |store| repo  = store[id] }
     repo
   end
 
   def batch_info(repository_ids)
     repos = []
+
     open do |store|
       repository_ids.each do |id|
-        repos << store[id]
+        repos << store[id.to_sym]
       end
     end
     repos.compact
   end
 
-  def repositories_info()
+  def all
     repos = []
     open do |store|
-      store.roots().each do |id|
-      repos << store[id]
-      end
+      store.roots().each { |id| repos << store[id] }
     end
+
     repos
   end
 

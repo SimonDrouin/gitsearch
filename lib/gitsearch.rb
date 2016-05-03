@@ -35,20 +35,33 @@ module Gitsearch
     end
   end
 
-  def self.list_by_ids(ids= nil)
+  def self.list(repository_ids, log=nil, verbose=nil, language=nil, description=nil)
     db = Database.new
 
-    unless ids
-        log = Log.new.log_id(options[:log])
-        ids = log.ids
+    repos = db.batch_info(repository_ids) if repository_ids
+
+    if log
+      puts "Fetching repositories from log: #{log}" if verbose
+      logger = Log.new(log)
+
+      repos.merge(db.batch_info(logger.ids))
     end
 
-    db.batch_info(ids.map {|id| id.to_sym})
-  end
+    if language then
+      puts "Filtering repositories by language: #{language}" if verbose
+      repos = filter_by_lang(repos, language)
+    end
 
-  def self.list_all()
-    db = Database.new
-    db.repositories_info()
+    repos = db.all if repos.empty? && repository_ids.empty? && log.nil?
+    repos.each do |repo|
+      if repo then
+        puts "----------" + "\n"
+        puts "Name: #{repo["name"]}" + "\n"
+        puts "Github URL: #{repo["html_url"]}" + "\n"
+        puts "External Repository id: #{repo["id"]}"
+        puts wrap("Description: #{repo["description"]}") if description
+      end
+    end
   end
 
   def self.filter_by_lang(repositories, language)
